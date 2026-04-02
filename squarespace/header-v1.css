@@ -3,4 +3,7 @@
   so you can toggle this independently from cta-test-1.css.
 */
 
-/* Add real rules below after inspecting your live header. */
+/* Test: header titles using text--title3 */
+.text--title3 {
+  color: magenta !important;
+}
