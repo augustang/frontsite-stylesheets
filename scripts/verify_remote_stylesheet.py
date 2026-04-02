@@ -147,6 +147,96 @@ def main() -> None:
     except OSError as e:
         emit("H3", "local_read_failed", {"error": str(e)}, run_id="verify")
 
+    # H4: page CSP may block <link href="https://raw.githubusercontent.com/...">
+    page_url = os.environ.get("CHECK_PAGE_URL", "").strip()
+    urls: list[tuple[str, str]] = []
+    if page_url:
+        urls.append((page_url, "user_site"))
+    if os.environ.get("CHECK_SQUARESPACE_REFERENCE", "1") not in ("0", "false", "no"):
+        urls.append(("https://www.squarespace.com/", "squarespace_com_reference"))
+
+    if not urls:
+        emit(
+            "H4",
+            "csp_skip",
+            {
+                "reason": "Set CHECK_PAGE_URL to your live site to log its CSP, or leave default reference on",
+            },
+            run_id="verify",
+        )
+    for u, label in urls:
+        log_csp_headers(u, label)
+
+
+def log_csp_headers(page_url: str, label: str) -> None:
+    # region agent log
+    emit("H4", "csp_fetch_start", {"pageUrl": page_url, "label": label}, run_id="verify")
+    # endregion
+
+    def try_open(ctx: ssl.SSLContext | None):
+        req = urllib.request.Request(
+            page_url,
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+                )
+            },
+        )
+        kw: dict = {"timeout": 25}
+        if ctx is not None:
+            kw["context"] = ctx
+        return urllib.request.urlopen(req, **kw)
+
+    resp = None
+    try:
+        try:
+            resp = try_open(ssl.create_default_context())
+        except Exception as e:
+            err = str(e)
+            if "CERTIFICATE_VERIFY_FAILED" in err or "SSL" in type(e).__name__:
+                resp = try_open(ssl._create_unverified_context())
+            else:
+                raise
+        status = resp.status
+        csp = resp.headers.get("Content-Security-Policy", "") or ""
+        csp_ro = resp.headers.get("Content-Security-Policy-Report-Only", "") or ""
+        try:
+            resp.read(8192)
+        except Exception:
+            pass
+        resp.close()
+        combined = (csp + " " + csp_ro).lower()
+        mentions_github = "raw.githubusercontent.com" in combined
+        mentions_style_src = "style-src" in combined
+        emit(
+            "H4",
+            "csp_headers",
+            {
+                "label": label,
+                "pageUrl": page_url,
+                "httpStatus": status,
+                "cspLength": len(csp),
+                "cspReportOnlyLength": len(csp_ro),
+                "cspTruncated": (csp[:1800] if csp else ""),
+                "mentionsRawGithub": mentions_github,
+                "hasStyleSrcDirective": mentions_style_src,
+            },
+            run_id="verify",
+        )
+    except Exception as e:
+        emit(
+            "H4",
+            "csp_fetch_failed",
+            {
+                "label": label,
+                "pageUrl": page_url,
+                "error": type(e).__name__,
+                "detail": str(e)[:500],
+            },
+            run_id="verify",
+        )
+
 
 if __name__ == "__main__":
     main()

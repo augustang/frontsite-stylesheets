@@ -35,3 +35,18 @@ Duplicate a file, rename it (e.g. `typography-tweaks.css`), push, and add its ra
 
 Raw URL for the probe (after push):  
 `https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/inject-probe.css`
+
+### Magenta probe does not show (on Squarespace)
+
+That usually means **the CSS never applies to the page** — not a CTA selector issue.
+
+1. **Confirm the file loads** — Paste the probe raw URL into the address bar; you should see CSS text. If not, push `inject-probe.css` to `main` or fix the URL.
+2. **Extension active on this tab** — Super CSS Inject popup: pick the probe (or CTA) stylesheet for **this** tab, then hard-refresh.
+3. **CSP blocking external stylesheets** — Open DevTools → **Console** and look for messages like “Refused to load the stylesheet” / “Content Security Policy”. If present, URL-based injectors may not work on that site; use an extension that injects **inline** rules (e.g. [Stylus](https://chrome.google.com/webstore/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne) or “User JavaScript and CSS”) and paste the contents of `cta-test-1.css` for your domain.
+4. **Log CSP from your live URL** (helps narrow this down):
+
+   `CHECK_PAGE_URL=https://your-published-site.com python3 scripts/verify_remote_stylesheet.py`
+
+   Then read `.cursor/debug-d54107.log` for `hypothesisId` **H4** lines (`csp_headers` / `csp_fetch_failed`).
+
+5. **Control test without Squarespace** — Open [`debug/local-probe.html`](../debug/local-probe.html) in Chrome. If magenta appears there but not on Squarespace, injection or CSP on the Squarespace tab is the likely cause.
