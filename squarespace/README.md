@@ -49,4 +49,4 @@ That usually means **the CSS never applies to the page** — not a CTA selector 
 
    Then read `.cursor/debug-d54107.log` for `hypothesisId` **H4** lines (`csp_headers` / `csp_fetch_failed`).
 
-5. **Control test without Squarespace** — Open [`debug/local-probe.html`](../debug/local-probe.html) in Chrome. If magenta appears there but not on Squarespace, injection or CSP on the Squarespace tab is the likely cause.
+5. **Control test without Squarespace** — Open [`debug/local-probe.html`](../debug/local-probe.html) in Chrome. You should always see a **green top bar** (inline in the HTML). **Magenta inset** comes from CSS. If you see green but no magenta while using `file://`, Chrome may block linked styles; from the **repo root** run `python3 -m http.server 8765` and open `http://localhost:8765/debug/local-probe.html` instead.

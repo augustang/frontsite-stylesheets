@@ -1,9 +1,16 @@
 /*
   Injection probe — NOT for production.
-  If this stylesheet loads via Super CSS Inject, the viewport gets a bright
-  magenta inset frame. If you do NOT see it, the extension is not applying
-  this URL to the tab (wrong URL, disabled, cache, or site blocking inject).
+  Bright fixed overlay so the probe is obvious even on short pages.
 */
 html {
-  box-shadow: inset 0 0 8px 8px #ff00ff !important;
+  min-height: 100vh !important;
+}
+
+body::before {
+  content: "";
+  position: fixed !important;
+  inset: 0 !important;
+  box-shadow: inset 0 0 24px 12px #ff00ff !important;
+  pointer-events: none !important;
+  z-index: 2147483647 !important;
 }

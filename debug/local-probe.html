@@ -3,17 +3,34 @@
   <head>
     <meta charset="utf-8" />
     <title>Inject probe (no extension)</title>
-    <!-- Loads the same probe CSS as Super CSS Inject would link to -->
+    <style>
+      /* Loads with zero network — proves this file opened in Chrome */
+      body {
+        margin: 0;
+        border-top: 14px solid #0a0 !important;
+        min-height: 100vh;
+        box-sizing: border-box;
+        font-family: system-ui, sans-serif;
+        padding: 1rem;
+      }
+    </style>
+    <!-- Same-repo file: works when opened via file:// or http://localhost/... -->
+    <link rel="stylesheet" href="../squarespace/inject-probe.css" />
+    <!-- Same URL Super CSS Inject uses (may be blocked on file:// in some Chrome setups) -->
     <link
       rel="stylesheet"
       href="https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/inject-probe.css"
     />
   </head>
   <body>
-    <p style="padding: 1rem; font-family: system-ui">
-      Open this file in Chrome (File → Open). If you see a <strong>magenta inset</strong>
-      around the page, your browser can load the GitHub raw stylesheet. If not, check
-      network/offline or that <code>inject-probe.css</code> is pushed to <code>main</code>.
+    <p>
+      <strong>Green bar</strong> at the very top = this HTML loaded. <strong>Magenta inset</strong>
+      around the viewport = probe CSS loaded (local link, GitHub link, or both).
+    </p>
+    <p>
+      If you see green but <em>no</em> magenta: avoid <code>file://</code> — from the
+      <strong>repo root</strong> run <code>python3 -m http.server 8765</code>, then open
+      <code>http://localhost:8765/debug/local-probe.html</code> in Chrome.
     </p>
   </body>
 </html>
