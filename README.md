@@ -4,4 +4,4 @@ Public CSS files for testing site overrides with browser extensions (e.g. [Super
 
 ## Squarespace
 
-See [squarespace/README.md](squarespace/README.md) for **raw GitHub URLs** to paste into the extension and workflow notes.
+See [squarespace/README.md](squarespace/README.md) for **jsDelivr URLs** (recommended) to paste into the extension, troubleshooting, and workflow notes.
