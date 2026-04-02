@@ -31,14 +31,23 @@ Duplicate a file, rename it (e.g. `typography-tweaks.css`), push, and add its js
 
 ## Troubleshooting (injection vs selectors)
 
-1. **Verify hosted CSS** (from repo root):  
-   `python3 scripts/verify_remote_stylesheet.py`  
-   Reads `.cursor/debug-d54107.log` for **H5** (jsDelivr probe) and **H6** (`raw` vs jsDelivr mismatch = stale raw).  
-   Optionally: `VERIFY_STYLESHEET_URL='https://...' python3 scripts/verify_remote_stylesheet.py`
+1. **Probe works but CTAs do not change** — In Super CSS Inject’s **popup for that tab**, switch the active stylesheet from **inject-probe** to **cta-test-1** (or enable both if the extension allows multiple injections). The probe only loads `inject-probe.css`; your button rules live in `cta-test-1.css`.
 
-2. **Verify the extension injects anything** — add the **inject probe** jsDelivr URL in Super CSS Inject, activate it on your Squarespace tab, hard-refresh. You should see a **magenta inset frame** on the viewport. Remove the probe URL when done.
+2. **Optional — “verify script” (what it does)**  
+   From the repo folder in Terminal:
 
-3. **If the probe works but CTAs do not change** — selectors in `cta-test-1.css` do not match your template. In DevTools, inspect a CTA, note its classes/tag, and add a matching selector (or share the outer HTML with your engineer).
+   `python3 scripts/verify_remote_stylesheet.py`
+
+   That script **downloads** your public CSS from the internet (same URLs the extension uses) and appends lines to **`.cursor/debug-d54107.log`**. You do not need to read it unless you’re debugging hosting/CDN issues. In plain terms:
+   - **H1 / H2** — `cta-test-1.css` returned 200 and contains `border-radius` / `sqs-` selectors.
+   - **H3** — your **local** `squarespace/cta-test-1.css` matches what jsDelivr serves (`exactMatch: true` after you’ve pushed).
+   - **H5** — `inject-probe.css` on jsDelivr is the new overlay (`containsBodyBeforeOverlay: true`).
+   - **H6** — whether **raw GitHub** `/main/` for the probe matches jsDelivr (`bodyEqualsJsdelivrMain`; `false` means raw was stale).
+
+   To also log **Content-Security-Policy** headers for **your** live site:  
+   `CHECK_PAGE_URL=https://yoursite.com python3 scripts/verify_remote_stylesheet.py`
+
+3. **Still no CTA change with `cta-test-1.css` active** — In DevTools, **inspect** a button, note the tag and `class` values on the clickable node (and its parent), then add matching selectors to `cta-test-1.css`, commit, push, and hard-refresh.
 
 ### Magenta probe does not show (on Squarespace)
 

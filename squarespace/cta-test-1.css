@@ -34,7 +34,29 @@ button.sqs-editable-button,
 button.newsletter-form-button,
 button.form-submit-button-input,
 [data-animation-role="button"],
-a[data-animation-role="button"] {
+a[data-animation-role="button"],
+/* Classic templates (capital Header*) */
+.Header-nav-item--cta a,
+.Header-nav-item--cta .Header-nav-item-folder-title,
+.Header-nav-item--collection a,
+/* .btn is used for pill CTAs in many 7.0 / 7.1 layouts */
+#siteWrapper a.btn,
+#siteWrapper button.btn,
+header a.btn,
+header button.btn,
+.header-display-desktop a.btn,
+.header-display-mobile a.btn,
+.header-menu-nav-item a.btn,
+/* BEM wrappers around fluid buttons */
+.sqs-button-element__wrapper,
+a.sqs-button-element__wrapper,
+/* Commerce / product */
+.sqs-add-to-cart-button-wrapper .sqs-add-to-cart-button,
+.sqs-add-to-cart-button-wrapper a,
+.ProductItem-details .sqs-add-to-cart-button,
+/* Donation / members (class names vary) */
+a[class*="donate-button"],
+button[class*="donate-button"] {
   border-radius: 4px !important;
   /* Inner fills often ignore parent radius unless clipped */
   overflow: hidden !important;
