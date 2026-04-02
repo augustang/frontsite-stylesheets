@@ -22,3 +22,16 @@ After you **push** changes, wait a moment or hard-refresh the Squarespace tab if
 ## More “sets”
 
 Duplicate a file, rename it (e.g. `typography-tweaks.css`), push, and add its raw URL as another entry in the extension.
+
+## Troubleshooting (injection vs selectors)
+
+1. **Verify GitHub serves your CSS** (from repo root):  
+   `python3 scripts/verify_remote_stylesheet.py`  
+   Optionally: `VERIFY_STYLESHEET_URL='https://raw.githubusercontent.com/.../other.css' python3 scripts/verify_remote_stylesheet.py`
+
+2. **Verify the extension injects anything** — push `inject-probe.css`, add its raw URL in Super CSS Inject, activate it on your Squarespace tab, hard-refresh. You should see a **magenta inset frame** on the viewport. Remove the probe URL when done.
+
+3. **If the probe works but CTAs do not change** — selectors in `cta-test-1.css` do not match your template. In DevTools, inspect a CTA, note its classes/tag, and add a matching selector (or share the outer HTML with your engineer).
+
+Raw URL for the probe (after push):  
+`https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/inject-probe.css`

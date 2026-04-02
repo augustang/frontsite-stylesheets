@@ -1,0 +1,9 @@
+/*
+  Injection probe — NOT for production.
+  If this stylesheet loads via Super CSS Inject, the viewport gets a bright
+  magenta inset frame. If you do NOT see it, the extension is not applying
+  this URL to the tab (wrong URL, disabled, cache, or site blocking inject).
+*/
+html {
+  box-shadow: inset 0 0 8px 8px #ff00ff !important;
+}
