@@ -1,6 +1,7 @@
 /*
   CTA test — 4px corner radius on primary button-style links.
-  Raw: https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/cta-test-1.css
+  Recommended (Super CSS Inject): https://cdn.jsdelivr.net/gh/augustang/frontsite-stylesheets@main/squarespace/cta-test-1.css
+  Raw (may lag): https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/cta-test-1.css
 
   If a CTA still looks square, inspect it in DevTools and add its class here.
 */

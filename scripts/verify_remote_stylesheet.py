@@ -15,8 +15,8 @@ LOG_PATH = os.path.join(
 LOG_PATH = os.path.normpath(LOG_PATH)
 SESSION_ID = "d54107"
 DEFAULT_URL = (
-    "https://raw.githubusercontent.com/augustang/frontsite-stylesheets/"
-    "main/squarespace/cta-test-1.css"
+    "https://cdn.jsdelivr.net/gh/augustang/frontsite-stylesheets@main/"
+    "squarespace/cta-test-1.css"
 )
 
 
@@ -33,6 +33,33 @@ def emit(hypothesis_id: str, message: str, data: dict, run_id: str = "verify") -
     os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
     with open(LOG_PATH, "a", encoding="utf-8") as f:
         f.write(json.dumps(line, ensure_ascii=False) + "\n")
+
+
+def _fetch_text(url: str) -> tuple[int | None, str, str | None]:
+    """HTTP GET url; return (status, body, error_message). error_message set on failure."""
+    req = urllib.request.Request(
+        url,
+        headers={"User-Agent": "frontsite-stylesheets-verify/1.0"},
+    )
+
+    def open_url(ctx: ssl.SSLContext | None):
+        kw: dict = {"timeout": 25}
+        if ctx is not None:
+            kw["context"] = ctx
+        return urllib.request.urlopen(req, **kw)
+
+    try:
+        try:
+            with open_url(ssl.create_default_context()) as resp:
+                return resp.status, resp.read().decode("utf-8", errors="replace"), None
+        except Exception as e1:
+            err = str(e1)
+            if "CERTIFICATE_VERIFY_FAILED" in err or "SSL" in type(e1).__name__:
+                with open_url(ssl._create_unverified_context()) as resp:
+                    return resp.status, resp.read().decode("utf-8", errors="replace"), None
+            raise
+    except Exception as e:
+        return None, "", f"{type(e).__name__}: {e}"[:500]
 
 
 def main() -> None:
@@ -147,7 +174,7 @@ def main() -> None:
     except OSError as e:
         emit("H3", "local_read_failed", {"error": str(e)}, run_id="verify")
 
-    log_inject_probe_on_github()
+    log_inject_probe_cdns()
 
     # H4: page CSP may block <link href="https://raw.githubusercontent.com/...">
     page_url = os.environ.get("CHECK_PAGE_URL", "").strip()
@@ -170,66 +197,88 @@ def main() -> None:
         log_csp_headers(u, label)
 
 
-def log_inject_probe_on_github() -> None:
+def log_inject_probe_cdns() -> None:
     # region agent log
-    """H5: confirm inject-probe.css is reachable on GitHub raw (network path OK)."""
-    probe_url = os.environ.get(
-        "VERIFY_INJECT_PROBE_URL",
-        "https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/inject-probe.css",
-    )
-    emit("H5", "inject_probe_check_start", {"url": probe_url}, run_id="verify")
-    # endregion
-    try:
-        req = urllib.request.Request(
-            probe_url,
-            headers={"User-Agent": "frontsite-stylesheets-verify/1.0"},
-        )
+    """H5 jsDelivr (recommended CDN); H6 raw /main staleness vs jsDelivr."""
+    override = os.environ.get("VERIFY_INJECT_PROBE_URL", "").strip()
+    jsd_url = "https://cdn.jsdelivr.net/gh/augustang/frontsite-stylesheets@main/squarespace/inject-probe.css"
+    raw_url = "https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/inject-probe.css"
 
-        def open_probe(ctx: ssl.SSLContext | None):
-            kw: dict = {"timeout": 25}
-            if ctx is not None:
-                kw["context"] = ctx
-            return urllib.request.urlopen(req, **kw)
-
-        try:
-            with open_probe(ssl.create_default_context()) as resp:
-                status = resp.status
-                body = resp.read().decode("utf-8", errors="replace")
-        except Exception as e1:
-            err = str(e1)
-            if "CERTIFICATE_VERIFY_FAILED" in err or "SSL" in type(e1).__name__:
-                with open_probe(ssl._create_unverified_context()) as resp:
-                    status = resp.status
-                    body = resp.read().decode("utf-8", errors="replace")
-            else:
-                raise
-    except Exception as e:
+    if override:
+        emit("H5", "inject_probe_check_start", {"url": override}, run_id="verify")
+        st, body, err = _fetch_text(override)
+        if err:
+            emit(
+                "H5",
+                "inject_probe_fetch_failed",
+                {"error": err, "url": override},
+                run_id="verify",
+            )
+            return
+        low = body.lower()
         emit(
             "H5",
-            "inject_probe_fetch_failed",
+            "inject_probe_fetch_ok",
             {
-                "error": type(e).__name__,
-                "detail": str(e)[:400],
-                "url": probe_url,
+                "cdn": "override",
+                "status": st,
+                "byteLength": len(body.encode("utf-8")),
+                "containsMagentaToken": "ff00ff" in low,
+                "containsBodyBeforeOverlay": "body::before" in low,
             },
             run_id="verify",
         )
         return
 
-    low = body.lower()
-    has_magenta = "ff00ff" in low
-    has_before = "body::before" in low
+    emit("H5", "inject_probe_jsdelivr_start", {"url": jsd_url}, run_id="verify")
+    st_j, body_j, err_j = _fetch_text(jsd_url)
+    if err_j:
+        emit(
+            "H5",
+            "inject_probe_jsdelivr_failed",
+            {"error": err_j, "url": jsd_url},
+            run_id="verify",
+        )
+    else:
+        low_j = body_j.lower()
+        emit(
+            "H5",
+            "inject_probe_jsdelivr_ok",
+            {
+                "status": st_j,
+                "byteLength": len(body_j.encode("utf-8")),
+                "containsMagentaToken": "ff00ff" in low_j,
+                "containsBodyBeforeOverlay": "body::before" in low_j,
+            },
+            run_id="verify",
+        )
+
+    emit("H6", "inject_probe_raw_main_start", {"url": raw_url}, run_id="verify")
+    st_r, body_r, err_r = _fetch_text(raw_url)
+    if err_r:
+        emit(
+            "H6",
+            "inject_probe_raw_main_failed",
+            {"error": err_r, "url": raw_url},
+            run_id="verify",
+        )
+        return
+
+    low_r = body_r.lower()
+    match_jsd = err_j is None and body_r == body_j
     emit(
-        "H5",
-        "inject_probe_fetch_ok",
+        "H6",
+        "inject_probe_raw_main_ok",
         {
-            "status": status,
-            "byteLength": len(body.encode("utf-8")),
-            "containsMagentaToken": has_magenta,
-            "containsBodyBeforeOverlay": has_before,
+            "status": st_r,
+            "byteLength": len(body_r.encode("utf-8")),
+            "containsMagentaToken": "ff00ff" in low_r,
+            "containsBodyBeforeOverlay": "body::before" in low_r,
+            "bodyEqualsJsdelivrMain": match_jsd,
         },
         run_id="verify",
     )
+    # endregion
 
 
 def log_csp_headers(page_url: str, label: str) -> None:

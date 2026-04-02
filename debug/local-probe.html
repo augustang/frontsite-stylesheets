@@ -16,16 +16,16 @@
     </style>
     <!-- Same-repo file: works when opened via file:// or http://localhost/... -->
     <link rel="stylesheet" href="../squarespace/inject-probe.css" />
-    <!-- Same URL Super CSS Inject uses (may be blocked on file:// in some Chrome setups) -->
+    <!-- Same CDN Super CSS Inject should use (raw /main/ can be stale on GitHub’s CDN) -->
     <link
       rel="stylesheet"
-      href="https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/inject-probe.css"
+      href="https://cdn.jsdelivr.net/gh/augustang/frontsite-stylesheets@main/squarespace/inject-probe.css"
     />
   </head>
   <body>
     <p>
       <strong>Green bar</strong> at the very top = this HTML loaded. <strong>Magenta inset</strong>
-      around the viewport = probe CSS loaded (local link, GitHub link, or both).
+      around the viewport = probe CSS loaded (local file, jsDelivr, or both).
     </p>
     <p>
       If you see green but <em>no</em> magenta: avoid <code>file://</code> — from the

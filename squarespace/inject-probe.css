@@ -1,6 +1,7 @@
 /*
   Injection probe — NOT for production.
   Bright fixed overlay so the probe is obvious even on short pages.
+  URL: https://cdn.jsdelivr.net/gh/augustang/frontsite-stylesheets@main/squarespace/inject-probe.css
 */
 html {
   min-height: 100vh !important;
