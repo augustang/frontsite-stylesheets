@@ -2,8 +2,7 @@
   CTA test — 4px corner radius on primary button-style links.
   Raw: https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/cta-test-1.css
 
-  If a CTA on your template does not pick this up, inspect it and add that
-  selector below (Squarespace varies by version and section type).
+  If a CTA still looks square, inspect it in DevTools and add its class here.
 */
 
 a.sqs-block-button-element,
@@ -13,12 +12,35 @@ a.sqs-button-element,
 .sqs-button-element--primary,
 .sqs-button-element--secondary,
 .sqs-button-element--tertiary,
+/* Substring catches for Fluid / minified class variants */
+a[class*="sqs-button-element"],
+button[class*="sqs-button-element"],
+a[class*="sqs-block-button"],
+button[class*="sqs-block-button"],
+/* Wrapper link inside button blocks */
+.sqs-block-button-container a,
+.sqs-block-button-container button,
 .header-actions-action--cta a,
 .header-actions-action--cta .btn,
 .header-menu-nav-item--cta a,
 .header-menu-cta a,
+.header-menu-nav-item a[class*="cta"],
 form.sqs-system-button .button,
 button.sqs-editable-button,
-.sqs-add-to-cart-button {
+.sqs-add-to-cart-button,
+.newsletter-form-wrapper .newsletter-form-button,
+.newsletter-button-wrapper a,
+button.newsletter-form-button,
+button.form-submit-button-input,
+[data-animation-role="button"],
+a[data-animation-role="button"] {
   border-radius: 4px !important;
+  /* Inner fills often ignore parent radius unless clipped */
+  overflow: hidden !important;
+}
+
+/* Some sections paint the fill on the container, not the <a> */
+.sqs-block-button-container {
+  border-radius: 4px !important;
+  overflow: hidden !important;
 }
