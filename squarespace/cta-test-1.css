@@ -6,61 +6,7 @@
   If a CTA still looks square, inspect it in DevTools and add its class here.
 */
 
-a.sqs-block-button-element,
-.sqs-block-button-element,
-a.sqs-button-element,
-.sqs-button-element,
-.sqs-button-element--primary,
-.sqs-button-element--secondary,
-.sqs-button-element--tertiary,
-/* Substring catches for Fluid / minified class variants */
-a[class*="sqs-button-element"],
-button[class*="sqs-button-element"],
-a[class*="sqs-block-button"],
-button[class*="sqs-block-button"],
-/* Wrapper link inside button blocks */
-.sqs-block-button-container a,
-.sqs-block-button-container button,
-.header-actions-action--cta a,
-.header-actions-action--cta .btn,
-.header-menu-nav-item--cta a,
-.header-menu-cta a,
-.header-menu-nav-item a[class*="cta"],
-form.sqs-system-button .button,
-button.sqs-editable-button,
-.sqs-add-to-cart-button,
-.newsletter-form-wrapper .newsletter-form-button,
-.newsletter-button-wrapper a,
-button.newsletter-form-button,
-button.form-submit-button-input,
-[data-animation-role="button"],
-a[data-animation-role="button"],
-/* Your template / global nav */
-.global-navigation__cta,
-.global-navigation__cta a,
-.cta--primary,
-/* Classic templates (capital Header*) */
-.Header-nav-item--cta a,
-.Header-nav-item--cta .Header-nav-item-folder-title,
-.Header-nav-item--collection a,
-/* .btn is used for pill CTAs in many 7.0 / 7.1 layouts */
-#siteWrapper a.btn,
-#siteWrapper button.btn,
-header a.btn,
-header button.btn,
-.header-display-desktop a.btn,
-.header-display-mobile a.btn,
-.header-menu-nav-item a.btn,
-/* BEM wrappers around fluid buttons */
-.sqs-button-element__wrapper,
-a.sqs-button-element__wrapper,
-/* Commerce / product */
-.sqs-add-to-cart-button-wrapper .sqs-add-to-cart-button,
-.sqs-add-to-cart-button-wrapper a,
-.ProductItem-details .sqs-add-to-cart-button,
-/* Donation / members (class names vary) */
-a[class*="donate-button"],
-button[class*="donate-button"] {
+a {
   border-radius: 4px !important;
   /* Inner fills often ignore parent radius unless clipped */
   overflow: hidden !important;
