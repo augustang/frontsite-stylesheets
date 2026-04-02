@@ -35,6 +35,10 @@ button.newsletter-form-button,
 button.form-submit-button-input,
 [data-animation-role="button"],
 a[data-animation-role="button"],
+/* Your template / global nav */
+.global-navigation__cta,
+.global-navigation__cta a,
+.cta--primary,
 /* Classic templates (capital Header*) */
 .Header-nav-item--cta a,
 .Header-nav-item--cta .Header-nav-item-folder-title,
