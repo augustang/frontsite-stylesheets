@@ -6,10 +6,10 @@ Replace `main` below if your default branch is different.
 
 ## Stylesheet URLs (copy-paste)
 
-| Alias idea        | Raw URL |
-| ----------------- | ------- |
-| Sample (all areas) | `https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/sample-overrides.css` |
-| Header v1         | `https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/header-v1.css` |
+| Alias idea   | Raw URL |
+| ------------ | ------- |
+| CTA test 1   | `https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/cta-test-1.css` |
+| Header v1    | `https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/header-v1.css` |
 
 After you **push** changes, wait a moment or hard-refresh the Squarespace tab if the extension still shows old CSS (GitHub raw CDN cache).
 

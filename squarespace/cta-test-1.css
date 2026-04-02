@@ -1,0 +1,24 @@
+/*
+  CTA test — 4px corner radius on primary button-style links.
+  Raw: https://raw.githubusercontent.com/augustang/frontsite-stylesheets/main/squarespace/cta-test-1.css
+
+  If a CTA on your template does not pick this up, inspect it and add that
+  selector below (Squarespace varies by version and section type).
+*/
+
+a.sqs-block-button-element,
+.sqs-block-button-element,
+a.sqs-button-element,
+.sqs-button-element,
+.sqs-button-element--primary,
+.sqs-button-element--secondary,
+.sqs-button-element--tertiary,
+.header-actions-action--cta a,
+.header-actions-action--cta .btn,
+.header-menu-nav-item--cta a,
+.header-menu-cta a,
+form.sqs-system-button .button,
+button.sqs-editable-button,
+.sqs-add-to-cart-button {
+  border-radius: 4px !important;
+}
