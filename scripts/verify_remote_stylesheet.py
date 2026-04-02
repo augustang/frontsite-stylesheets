@@ -160,17 +160,48 @@ def main() -> None:
     try:
         with open(local, encoding="utf-8") as f:
             local_body = f.read()
+        lb = local_body.strip()
         emit(
             "H3",
-            "local_vs_remote",
+            "local_vs_default_url",
             {
                 "localPath": local,
-                "exactMatch": local_body.strip() == body.strip(),
+                "comparedToUrl": url,
+                "exactMatch": lb == body.strip(),
                 "remoteBytes": len(body.encode("utf-8")),
                 "localBytes": len(local_body.encode("utf-8")),
+                "note": "Compared to VERIFY_STYLESHEET_URL or DEFAULT_URL (often jsDelivr)",
             },
             run_id="verify",
         )
+        # jsDelivr can lag GitHub after a push; compare the same file on raw /main/ too.
+        raw_cta = (
+            "https://raw.githubusercontent.com/augustang/frontsite-stylesheets/"
+            "main/squarespace/cta-test-1.css"
+        )
+        if local.endswith("cta-test-1.css"):
+            _st_r, body_r, err_r = _fetch_text(raw_cta)
+            if err_r:
+                emit(
+                    "H3",
+                    "local_vs_raw_github_failed",
+                    {"url": raw_cta, "error": err_r},
+                    run_id="verify",
+                )
+            else:
+                emit(
+                    "H3",
+                    "local_vs_raw_github_main",
+                    {
+                        "localPath": local,
+                        "comparedToUrl": raw_cta,
+                        "exactMatch": lb == body_r.strip(),
+                        "remoteBytes": len(body_r.encode("utf-8")),
+                        "localBytes": len(local_body.encode("utf-8")),
+                        "note": "If true but local_vs_default_url is false, jsDelivr is stale; wait or use raw URL in extension",
+                    },
+                    run_id="verify",
+                )
     except OSError as e:
         emit("H3", "local_read_failed", {"error": str(e)}, run_id="verify")
 

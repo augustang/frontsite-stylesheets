@@ -40,7 +40,7 @@ Duplicate a file, rename it (e.g. `typography-tweaks.css`), push, and add its js
 
    That script **downloads** your public CSS from the internet (same URLs the extension uses) and appends lines to **`.cursor/debug-d54107.log`**. You do not need to read it unless you’re debugging hosting/CDN issues. In plain terms:
    - **H1 / H2** — `cta-test-1.css` returned 200 and contains `border-radius` / `sqs-` selectors.
-   - **H3** — your **local** `squarespace/cta-test-1.css` matches what jsDelivr serves (`exactMatch: true` after you’ve pushed).
+   - **H3** — two lines when checking `cta-test-1.css`: **`local_vs_default_url`** compares your disk file to **jsDelivr** (can show `exactMatch: false` for a few minutes after `git push` while the CDN updates). **`local_vs_raw_github_main`** compares the same file to **raw GitHub** `/main/`; if that one is `exactMatch: true`, your push is fine and the extension will catch up once jsDelivr refreshes (or temporarily use the raw URL in Super CSS Inject).
    - **H5** — `inject-probe.css` on jsDelivr is the new overlay (`containsBodyBeforeOverlay: true`).
    - **H6** — whether **raw GitHub** `/main/` for the probe matches jsDelivr (`bodyEqualsJsdelivrMain`; `false` means raw was stale).
 
